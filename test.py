@@ -98,14 +98,15 @@ def test_bias(e=1):
 if __name__ == '__main__':
     for b in ['add', 'remove', 'asdf']:
         test_init(b)
-    
+    test_bias()
+
     elements = [1,'a']
     for e in elements:
         test_add(e)
         test_remove(e)
         test_lookup(e)
         test_merge(e)
-        test_bias(e)
+        
 
 
     
