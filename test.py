@@ -1,4 +1,5 @@
 import time
+import datetime as dt
 from LWWElementSet import LWWElementSet
 
 def passed(test_name):
@@ -78,7 +79,22 @@ def test_merge(e=1, bias='add'):
     except:
         failed('merge')
     passed('merge')
+
+def test_bias(e=1):
+    now = dt.datetime.now()
+    lww1 = LWWElementSet('add')
+    lww2 = LWWElementSet('remove')
+
+    lww1.add(e, add_time=now)
+    lww1.remove(e, remove_time=now)
+    if e not in lww1: failed('bias')
+
+    lww2.add(e, add_time=now)
+    lww2.remove(e, remove_time=now)
+    if e in lww2: failed('bias')
     
+    passed('bias')
+     
 if __name__ == '__main__':
     for b in ['add', 'remove', 'asdf']:
         test_init(b)
@@ -87,8 +103,9 @@ if __name__ == '__main__':
     for e in elements:
         test_add(e)
         test_remove(e)
-        test_lookup()
-        test_merge()
+        test_lookup(e)
+        test_merge(e)
+        test_bias(e)
 
 
     
