@@ -1,4 +1,5 @@
 import datetime as dt
+import time
 
 class LWWElementSet:
     def __init__(self, bias):
@@ -20,12 +21,12 @@ class LWWElementSet:
         return self.remove_set
 
     def add(self, e, add_time=None): # only last added time is useful
-        if add_time == None: add_time = dt.datetime.now()
+        if add_time == None: add_time = time.time()
         self.add_set[e] = add_time
         return
 
     def remove(self, e, remove_time=None): # only last removed time is useful
-        if remove_time == None: remove_time = dt.datetime.now()
+        if remove_time == None: remove_time = time.time()
         self.remove_set[e] = remove_time
         return
 
