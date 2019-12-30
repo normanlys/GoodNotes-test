@@ -14,8 +14,8 @@ struct LWWElementSet<T: Hashable> {
         case remove
     }
     
-    private(set) var addSet: [T: Date] = [:]
-    private(set) var removeSet: [T: Date] = [:]
+    private var addSet: [T: Date] = [:]
+    private var removeSet: [T: Date] = [:]
     
     let bias: Bias
     
