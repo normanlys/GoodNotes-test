@@ -14,12 +14,21 @@ class LWWElementSetTests: XCTestCase {
     var sut: LWWElementSet<AnyHashable>!
 
     override func setUp() {
-        sut = LWWElementSet<AnyHashable>(bias: .remove)
+        resetTest()
+    }
+    
+    private func resetTest(bias: LWWElementSet<AnyHashable>.Bias = .remove) {
+        sut = LWWElementSet<AnyHashable>(bias: bias)
     }
 
     func testInsertElements() {
-        sut.insert("")
-        XCTAssert(sut.contains(""))
+        let element = ""
+        sut.insert(element)
+        XCTAssert(sut.contains(element))
+        
+        resetTest(bias: .add)
+        sut.insert(element)
+        XCTAssert(sut.contains(element))
     }
     
     func testRemoveElements() {
@@ -28,7 +37,7 @@ class LWWElementSetTests: XCTestCase {
         sut.remove(element)
         XCTAssert(!sut.contains(element))
         
-        sut = LWWElementSet<AnyHashable>(bias: .add)
+        resetTest(bias: .add)
         sut.insert(element)
         usleep(1)
         sut.remove(element)
@@ -42,12 +51,36 @@ class LWWElementSetTests: XCTestCase {
         sut.insert(element)
         XCTAssert(sut.contains(element))
         
-        sut = LWWElementSet<AnyHashable>(bias: .add)
+        resetTest(bias: .add)
         sut.insert(element)
         usleep(1)
         sut.remove(element)
         usleep(1)
         sut.insert(element)
+        XCTAssert(sut.contains(element))
+    }
+    
+    func testMerge() {
+        let element = ""
+        
+        sut.insert(element)
+        let emptySet = LWWElementSet<AnyHashable>(bias: .remove)
+        sut.merge(emptySet)
+        XCTAssert(sut.contains(element))
+        
+        resetTest()
+        sut.insert(element)
+        var removedElementSet = LWWElementSet<AnyHashable>(bias: .remove)
+        removedElementSet.remove(element)
+        sut.merge(removedElementSet)
+        XCTAssert(!sut.contains(element))
+        
+        resetTest(bias: .add)
+        sut.remove(element)
+        usleep(1)
+        var addedElementSet = LWWElementSet<AnyHashable>(bias: .remove)
+        addedElementSet.insert(element)
+        sut.merge(addedElementSet)
         XCTAssert(sut.contains(element))
     }
 }
