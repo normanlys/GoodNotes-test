@@ -11,23 +11,43 @@ import XCTest
 
 class LWWElementSetTests: XCTestCase {
     
-    var stringSUT: LWWElementSet<String>!
-    var intSUT: LWWElementSet<Int>!
+    var sut: LWWElementSet<AnyHashable>!
 
     override func setUp() {
-        stringSUT = LWWElementSet<String>(bias: .add)
-        intSUT = LWWElementSet<Int>(bias: .add)
+        sut = LWWElementSet<AnyHashable>(bias: .remove)
     }
 
     func testInsertElements() {
-        ["", "a", "awe4f32ewsfd"].forEach {
-            stringSUT.insert($0)
-            XCTAssert(stringSUT.contains($0))
-        }
+        sut.insert("")
+        XCTAssert(sut.contains(""))
+    }
+    
+    func testRemoveElements() {
+        let element = ""
+        sut.insert(element)
+        sut.remove(element)
+        XCTAssert(!sut.contains(element))
         
-        [0, -1, 2931293].forEach {
-            intSUT.insert($0)
-            XCTAssert(intSUT.contains($0))
-        }
+        sut = LWWElementSet<AnyHashable>(bias: .add)
+        sut.insert(element)
+        usleep(1)
+        sut.remove(element)
+        XCTAssert(!sut.contains(element))
+    }
+    
+    func testInsertingElementsAfterRemoval() {
+        let element = ""
+        sut.insert(element)
+        sut.remove(element)
+        sut.insert(element)
+        XCTAssert(sut.contains(element))
+        
+        sut = LWWElementSet<AnyHashable>(bias: .add)
+        sut.insert(element)
+        usleep(1)
+        sut.remove(element)
+        usleep(1)
+        sut.insert(element)
+        XCTAssert(sut.contains(element))
     }
 }
