@@ -33,8 +33,8 @@ struct LWWElementSet<T: Hashable> {
     
     mutating func merge(_ lwwElementSet: LWWElementSet) {
         // use the latest inserted/removed pairs
-        addSet.merge(lwwElementSet.addSet) { max($0, $1) }
-        removeSet.merge(lwwElementSet.removeSet) { max($0, $1) }
+        addSet.merge(lwwElementSet.addSet, uniquingKeysWith: max)
+        removeSet.merge(lwwElementSet.removeSet, uniquingKeysWith: max)
     }
     
     func contains(_ element: T) -> Bool {
