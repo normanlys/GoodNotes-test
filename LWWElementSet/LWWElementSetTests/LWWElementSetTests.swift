@@ -23,38 +23,41 @@ class LWWElementSetTests: XCTestCase {
 
     func testInsertElements() {
         let element = ""
-        sut.insert(element)
-        XCTAssert(sut.contains(element))
+        let test: () -> Void = {
+            self.sut.insert(element)
+            XCTAssert(self.sut.contains(element))
+        }
         
+        test()
         resetSUT(bias: .add)
-        sut.insert(element)
-        XCTAssert(sut.contains(element))
+        test()
     }
     
     func testRemoveElements() {
         let element = ""
-        sut.insert(element)
-        sut.remove(element)
-        XCTAssert(!sut.contains(element))
+        let test: () -> Void = {
+            self.sut.insert(element)
+            self.sut.remove(element)
+            XCTAssert(!self.sut.contains(element))
+        }
         
+        test()
         resetSUT(bias: .add)
-        sut.insert(element)
-        sut.remove(element)
-        XCTAssert(!sut.contains(element))
+        test()
     }
     
     func testInsertingElementsAfterRemoval() {
         let element = ""
-        sut.insert(element)
-        sut.remove(element)
-        sut.insert(element)
-        XCTAssert(sut.contains(element))
+        let test: () -> Void = {
+            self.sut.insert(element)
+            self.sut.remove(element)
+            self.sut.insert(element)
+            XCTAssert(self.sut.contains(element))
+        }
         
+        test()
         resetSUT(bias: .add)
-        sut.insert(element)
-        sut.remove(element)
-        sut.insert(element)
-        XCTAssert(sut.contains(element))
+        test()
     }
     
     func testMergeEmptySet() {
@@ -68,37 +71,31 @@ class LWWElementSetTests: XCTestCase {
     
     func testMergeSetWithElementRemoved() {
         let element = ""
-        var removedElementSet: LWWElementSet<AnyHashable>
+        let test: () -> Void = {
+            self.sut.insert(element)
+            var removedElementSet = LWWElementSet<AnyHashable>(bias: .remove)
+            removedElementSet.remove(element)
+            self.sut.merge(removedElementSet)
+            XCTAssert(!self.sut.contains(element))
+        }
         
-        sut.insert(element)
-        removedElementSet = LWWElementSet<AnyHashable>(bias: .remove)
-        removedElementSet.remove(element)
-        sut.merge(removedElementSet)
-        XCTAssert(!sut.contains(element))
-        
+        test()
         resetSUT(bias: .add)
-        sut.insert(element)
-        removedElementSet = LWWElementSet<AnyHashable>(bias: .remove)
-        removedElementSet.remove(element)
-        sut.merge(removedElementSet)
-        XCTAssert(!sut.contains(element))
+        test()
     }
     
     func testMergeSetWithElementAdded() {
         let element = ""
-        var addedElementSet: LWWElementSet<AnyHashable>
+        let test: () -> Void = {
+            self.sut.remove(element)
+            var addedElementSet = LWWElementSet<AnyHashable>(bias: .remove)
+            addedElementSet.insert(element)
+            self.sut.merge(addedElementSet)
+            XCTAssert(self.sut.contains(element))
+        }
         
-        sut.remove(element)
-        addedElementSet = LWWElementSet<AnyHashable>(bias: .remove)
-        addedElementSet.insert(element)
-        sut.merge(addedElementSet)
-        XCTAssert(sut.contains(element))
-        
+        test()
         resetSUT(bias: .add)
-        sut.remove(element)
-        addedElementSet = LWWElementSet<AnyHashable>(bias: .remove)
-        addedElementSet.insert(element)
-        sut.merge(addedElementSet)
-        XCTAssert(sut.contains(element))
+        test()
     }
 }
